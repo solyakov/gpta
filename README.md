@@ -28,7 +28,7 @@ The [examples/](examples/) directory contains various .gpta and .sh files demons
 
 - **[check_updates.gpta](examples/check_updates.gpta)**: Checks for available updates on the system.
 - **[disk_usage.gpta](examples/disk_usage.gpta)**: Print top 5 largest files in /var/log.
-- **[explain_errors.sh](examples/explain_errors.sh)**: Pipe an error message into GPTA and ask it to explain.
+- **[explain_errors.sh](examples/explain_errors.sh)**: Pipe an error message into `gpta` and ask it to explain.
 - **[close_port.gpta](examples/close_port.gpta)**: Close port 3000 with elevated privileges.
 - **[http.gpta](examples/http.gpta)**: Download and display the first 10 lines of a remote file.
 
@@ -63,7 +63,7 @@ and more...
 
 ## Installation
 
-Build the GPTA binary by running `make`:
+Build the `gpta` binary by running `make`:
 
 ```bash
 $ make
