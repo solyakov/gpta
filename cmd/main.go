@@ -219,7 +219,7 @@ Your top priority is to assist the user in accomplishing the given task. Adhere 
 				log.Fatalf("Invalid exit code: %s", code)
 			}
 			if opts.Verbose {
-				log.Printf("Exiting with code %d", n)
+				log.Printf("Exiting with code: %d", n)
 			}
 			os.Exit(n)
 
