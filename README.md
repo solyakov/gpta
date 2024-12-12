@@ -5,7 +5,7 @@ GPT Assistant (`gpta`) is a command-line app that uses OpenAI to assist with tas
 ## Usage
 
 ```bash
-$ ./gpta -h
+$ gpta -h
 Usage:
   gpta [OPTIONS]
 
@@ -39,7 +39,7 @@ and more...
 Executing a task with `gpta` is as simple as providing a task string to the `-t` flag:
 
 ```bash
-% ./gpta -t "which ports are opened"
+% gpta -t "which ports are opened"
 tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN
 
 % gpta -t "what is my IP?" 
@@ -49,7 +49,7 @@ x.x.x.x
 `gpta` can also read tasks from a file or standard input:
 
 ```bash
-$ echo "What is my user name?" | ./gpta -v
+$ echo "What is my user name?" | gpta -v
 2024/12/12 21:26:14 Executing: echo $USER
 user0
 2024/12/12 21:26:14 Exiting with code 0
@@ -58,7 +58,7 @@ user0
 `gpta` can also be a shebang interpreter in scripts:
 
 ```bash
-#!../gpta -i
+#!/usr/local/bin/gpta -i
 
 Close port 3000 on my system. Use sudo to elevate the privileges.
 ```
