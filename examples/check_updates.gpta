@@ -1,0 +1,3 @@
+#!../gpta -i
+
+Check which updates are available for my system, do not update.

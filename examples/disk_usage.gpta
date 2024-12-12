@@ -1,0 +1,3 @@
+#!../gpta
+
+Check the disk usage of the /var/log directory and print the top 5 largest files. Use sudo to elevate the permissions.

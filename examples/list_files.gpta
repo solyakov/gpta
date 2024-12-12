@@ -1,0 +1,3 @@
+#!../gpta
+
+List all files in the current directory that start with the letter 'c' and sort them by their modification time.

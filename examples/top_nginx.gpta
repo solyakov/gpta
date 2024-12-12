@@ -1,0 +1,3 @@
+#!../gpta
+
+Find all running processes that contain 'nginx' and display their PID and memory usage.
