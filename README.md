@@ -39,7 +39,11 @@ and more...
 Executing a task with `gpta` is as simple as providing a task string to the `-t` flag:
 
 ```bash
-$ ./gpta -t "Check for available updates"
+% ./gpta -t "which ports are opened"
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN
+
+% gpta -t "what is my IP?" 
+x.x.x.x
 ```
 
 `gpta` can also read tasks from a file or standard input:
