@@ -32,6 +32,37 @@ tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN
 
 % gpta -t "what is my IP?" 
 x.x.x.x
+
+% gpta -t "is this makefile correct? do not execute it" makefile 
+The structure of the Makefile looks generally correct for a Go project. It defines 'compile' and 'clean' targets, with 'go build -o' used to build the binary and 'rm' to remove it. However, ensure paths are correct and handle potential errors during removal.
+
+% gpta -t "can you spot any spelling mistakes here?" < README.md 
+Spelling mistakes spotted: 'opened' should be 'open', 'shebang' should be capitalized as 'Shebang', and 'Print' should be 'Prints'.
+
+% gpta -vt "install netstat tool"
+2024/12/13 05:23:59 Executing: cat ~/gpta.conf
+No output
+2024/12/13 05:23:59 Executing: sudo apt-get update -y
+Hit:1 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Hit:2 http://de.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:3 http://de.archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:4 https://packages.microsoft.com/repos/edge stable InRelease
+Hit:5 http://de.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Hit:6 https://packages.microsoft.com/repos/code stable InRelease
+Reading package lists...
+2024/12/13 05:24:02 Executing: sudo apt-get install -y net-tools
+Reading package lists...
+Building dependency tree...
+Reading state information...
+net-tools is already the newest version (1.60+git20181103.0eebece-1ubuntu5).
+The following packages were automatically installed and are no longer required:
+  libirs-export161 libisccfg-export163 libmujs1 libsixel1 mpv
+  python3-pycryptodome python3-pyxattr rtmpdump
+Use 'sudo apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 111 not upgraded.
+2024/12/13 05:24:03 Executing: echo "Netstat is already installed as part of the net-tools package."
+Netstat is already installed as part of the net-tools package.
+2024/12/13 05:24:03 Exiting with code: 0
 ```
 
 `gpta` can also read tasks from a file or standard input:
