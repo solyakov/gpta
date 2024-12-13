@@ -40,7 +40,7 @@ The structure of the Makefile looks generally correct for a Go project. It defin
 Spelling mistakes spotted: 'opened' should be 'open', 'shebang' should be capitalized as 'Shebang', and 'Print' should be 'Prints'.
 
 % gpta -vt "install netstat tool"
-2024/12/13 05:23:59 Executing: cat ~/gpta.conf
+2024/12/13 05:23:59 Executing: cat ~/gpta.system
 No output
 2024/12/13 05:23:59 Executing: sudo apt-get update -y
 Hit:1 http://security.ubuntu.com/ubuntu jammy-security InRelease
@@ -65,7 +65,7 @@ Netstat is already installed as part of the net-tools package.
 2024/12/13 05:24:03 Exiting with code: 0
 
 % gpta -it "push my changes to git"
-Execute 'cat ~/gpta.conf' [Y/n]: 
+Execute 'cat ~/gpta.system' [Y/n]: 
 No output
 Execute 'git status' [Y/n]: 
 On branch main
@@ -85,6 +85,20 @@ Execute 'git commit -m "Update README.md"' [Y/n]:
 Execute 'git push origin main' [Y/n]: 
 To github.com:solyakov/gpta.git
    ba21bcc..8a63628  main -> main
+
+% alias tbls='gpta -t "list files in current directory, format output only as a table using ascii"'
+% tbls                                                                                             
+-----------------
+| Filename        |
+-----------------
+| cmd            |
+| examples       |
+| go.mod         |
+| go.sum         |
+| gpta           |
+| makefile       |
+| README.md      |
+-----------------
 ```
 
 `gpta` can also read tasks from a file or standard input:
