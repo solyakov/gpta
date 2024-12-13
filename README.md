@@ -63,6 +63,28 @@ Use 'sudo apt autoremove' to remove them.
 2024/12/13 05:24:03 Executing: echo "Netstat is already installed as part of the net-tools package."
 Netstat is already installed as part of the net-tools package.
 2024/12/13 05:24:03 Exiting with code: 0
+
+% gpta -it "push my changes to git"
+Execute 'cat ~/gpta.conf' [Y/n]: 
+No output
+Execute 'git status' [Y/n]: 
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Execute 'git add README.md' [Y/n]: 
+No output
+Execute 'git commit -m "Update README.md"' [Y/n]: 
+[main 8a63628] Update README.md
+ 1 file changed, 31 insertions(+)
+Execute 'git push origin main' [Y/n]: 
+To github.com:solyakov/gpta.git
+   ba21bcc..8a63628  main -> main
 ```
 
 `gpta` can also read tasks from a file or standard input:
