@@ -45,7 +45,7 @@ type Options struct {
 	Shell       string `short:"s" long:"shell" env:"GPTA_SHELL" description:"Shell to use for executing commands" default:"/bin/sh"`
 	Model       string `short:"m" long:"model" env:"GPTA_MODEL" description:"GPT model to use" default:"gpt-4o"`
 	Verbose     bool   `short:"v" long:"verbose" description:"Verbose output"`
-	Config      string `short:"c" long:"config" env:"GPTA_CONFIG" description:"Configuration file" default:"~/gpta.conf"`
+	Config      string `short:"c" long:"config" env:"GPTA_CONFIG" description:"Configuration file" default:"~/gpta.system"`
 }
 
 func execute(input, shell string) string {
