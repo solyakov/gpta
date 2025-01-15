@@ -120,10 +120,6 @@ func request(apiURL, apiKey string, requestBody ChatRequest) (*ChatResponse, err
 		return nil, fmt.Errorf("error decoding response JSON: %w", err)
 	}
 
-	if len(chatResponse.Choices) == 0 {
-		return nil, fmt.Errorf("no choices received in response")
-	}
-
 	return &chatResponse, nil
 }
 
@@ -205,6 +201,10 @@ Your top priority is to assist the user in accomplishing the given task. Adhere 
 		response, err := request(apiURL, opts.Key, requestBody)
 		if err != nil {
 			log.Fatalf("Error sending API request: %s", err)
+		}
+
+		if len(response.Choices) == 0 {
+			log.Fatalf("No choices received in response.")
 		}
 
 		content := response.Choices[0].Message.Content
