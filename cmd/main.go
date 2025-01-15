@@ -84,6 +84,49 @@ func confirm(command string) bool {
 	return response == "y" || response == "yes" || response == ""
 }
 
+func request(apiURL, apiKey string, requestBody ChatRequest) (*ChatResponse, error) {
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil, fmt.Errorf("error encoding JSON: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
+
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("error: %s", string(body))
+	}
+
+	var chatResponse ChatResponse
+	if err = json.Unmarshal(body, &chatResponse); err != nil {
+		return nil, fmt.Errorf("error decoding response JSON: %w", err)
+	}
+
+	if len(chatResponse.Choices) == 0 {
+		return nil, fmt.Errorf("no choices received in response")
+	}
+
+	return &chatResponse, nil
+}
+
 func main() {
 	var opts Options
 	args, err := flags.Parse(&opts)
@@ -114,7 +157,7 @@ func main() {
 	}
 
 	if strings.TrimSpace(task) == "" {
-		log.Fatalf("Please provide a task for the agent to perform.")
+		log.Fatal("Please provide a task for the agent to perform.")
 	}
 
 	messages := []Message{
@@ -138,7 +181,7 @@ You have two types of messages you can produce:
   - Do NOT use "shell:exit:<code>". Only "exit:<code>" is valid.
 
 Additional instructions:
-  - Before performing the main task, check ` + opts.Config + ` for additional instructions.
+  - BEFORE performing the task, read ` + opts.Config + ` for additional instructions.
   - Do NOT ask the user for input. You have no interactive abilities with the user.
   - All your responses MUST be in one of the two formats above: 'shell:' or 'exit:'.
   - Do not produce any other text outside these commands. Do not explain your reasoning to the user. 
@@ -148,73 +191,36 @@ Additional instructions:
     - "exit:<code>"
   - If you need to access a website or external resource, use 'shell:curl' or similar.
 
-Additional information:
-  - The current time is: ` + time.Now().Format(time.RFC1123) + `.
-  - The current working directory is: ` + os.Getenv("PWD") + `.
-  - The current user is: ` + os.Getenv("USER") + `.
-
 Your top priority is to assist the user in accomplishing the given task. Adhere strictly to the specified formats and constraints.
 `},
 		{Role: "user", Content: task},
 	}
+
 	for {
 		requestBody := ChatRequest{
 			Model:    opts.Model,
 			Messages: messages,
 		}
 
-		jsonData, err := json.Marshal(requestBody)
+		response, err := request(apiURL, opts.Key, requestBody)
 		if err != nil {
-			log.Fatalf("Error encoding JSON: %s", err)
+			log.Fatalf("Error sending API request: %s", err)
 		}
 
-		req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
-		if err != nil {
-			log.Fatalf("Error creating request: %s", err)
-		}
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", opts.Key))
+		content := response.Choices[0].Message.Content
 
-		client := &http.Client{
-			Timeout: 30 * time.Second,
-		}
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Fatalf("Error sending request: %s", err)
-		}
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatalf("Error reading response: %s", err)
-		}
-		resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			log.Fatalf("Error: %s", string(body))
+		if content == "" {
+			log.Fatal("Empty response received.")
 		}
 
-		var chatResponse ChatResponse
-		if err = json.Unmarshal(body, &chatResponse); err != nil {
-			log.Fatalf("Error decoding response JSON: %s", err)
-		}
-
-		if len(chatResponse.Choices) == 0 {
-			log.Fatalf("No choices received in response.")
-		}
-
-		response := chatResponse.Choices[0].Message.Content
-
-		if response == "" {
-			log.Fatalf("Empty response received.")
-		}
-
-		messages = append(messages, Message{Role: "assistant", Content: response})
+		messages = append(messages, Message{Role: "assistant", Content: content})
 
 		switch {
 
-		case strings.HasPrefix(response, "exit:"):
-			code := strings.TrimPrefix(response, "exit:")
+		case strings.HasPrefix(content, "exit:"):
+			code := strings.TrimPrefix(content, "exit:")
 			code = strings.TrimSpace(code)
-			n, err := strconv.Atoi(strings.TrimSpace(code))
+			n, err := strconv.Atoi(code)
 			if err != nil {
 				log.Fatalf("Invalid exit code: %s", code)
 			}
@@ -223,8 +229,8 @@ Your top priority is to assist the user in accomplishing the given task. Adhere 
 			}
 			os.Exit(n)
 
-		case strings.HasPrefix(response, "shell:"):
-			command := strings.TrimPrefix(response, "shell:")
+		case strings.HasPrefix(content, "shell:"):
+			command := strings.TrimPrefix(content, "shell:")
 			command = strings.TrimSpace(command)
 			if opts.Interactive && !confirm(command) {
 				log.Fatalf("Aborted by user.")
@@ -238,7 +244,7 @@ Your top priority is to assist the user in accomplishing the given task. Adhere 
 			continue
 
 		default:
-			log.Fatalf("Invalid response: %s", response)
+			log.Fatalf("Invalid response: %s", content)
 		}
 	}
 }
